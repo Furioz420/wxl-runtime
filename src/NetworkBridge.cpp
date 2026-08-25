@@ -6,7 +6,6 @@
 #include "engine/events/Event.hpp"
 #include "game/Network.hpp"
 #include "wxl/NetworkApi.h"
-#include "wxl/NetworkObserverApi.h"
 
 #include <windows.h>
 
@@ -193,8 +192,8 @@ namespace
         }
     }
 
-    void __fastcall ProcessMessage(void* client, void*, int time,
-                                   native::ClientPacket* packet, int unused)
+    void __fastcall ProcessMessage(void* client, void*, uint32_t connectionId,
+                                   native::ClientPacket* packet)
     {
         if (packet && packet->buffer && packet->read <= packet->size &&
             packet->size - packet->read >= sizeof(uint16_t))
@@ -211,7 +210,7 @@ namespace
         }
 
         if (g_originalProcessMessage)
-            g_originalProcessMessage(client, time, packet, unused);
+            g_originalProcessMessage(client, connectionId, packet);
     }
 
     int __cdecl RegisterClientOpcode(uint16_t opcode, const char* name)
@@ -298,11 +297,6 @@ namespace
         &RegisterClientOpcode,
         &RegisterServerOpcode,
         &Send,
-    };
-
-    WXL_NetworkObserverApi g_networkObserverApi = {
-        sizeof(WXL_NetworkObserverApi),
-        WXL_NETWORK_OBSERVER_API_VERSION,
         &RegisterServerObserver,
     };
 }
@@ -319,8 +313,6 @@ namespace wxl_runtime
 
         g_api->Subscribe(static_cast<uint32_t>(ev::Event::OnUpdate), &OnUpdate, nullptr);
         g_api->PublishInterface("wxl.network", WXL_NETWORK_API_VERSION, &g_networkApi);
-        g_api->PublishInterface("wxl.network-observer", WXL_NETWORK_OBSERVER_API_VERSION,
-                                &g_networkObserverApi);
         WLOG_INFO("network: custom opcode transport published");
         return true;
     }

@@ -6,8 +6,7 @@ owner for the client packet hook and lets feature modules register handlers thro
 ## Services
 
 - `wxl.framescript` v1 registers native Lua functions, scripts, and persistent client CVars.
-- `wxl.network` v1 registers and sends WarcraftXL custom opcodes.
-- `wxl.network-observer` v1 adds non-owning listeners without replacing a feature's packet handler.
+- `wxl.network` v1 registers and sends WarcraftXL custom opcodes and supports non-owning server-message observers.
 
 ## Requirements
 
@@ -19,11 +18,11 @@ network service still require a server implementation with the same opcodes and 
 
 ## Installation
 
-Install with WXL Hub. The release ZIP contains `wxl-runtime.dll` and `wxl-runtime.cfg`; the Hub places
-both under `Extensions\\wxl-runtime`. Restart the client after installing or updating a native module.
+Install with WXL Hub. The release ZIP contains `wxl-runtime.dll`; the Hub places it under
+`Extensions\\wxl-runtime`. Restart the client after installing or updating a native module.
 
-For manual installation, extract the release ZIP to that same directory. Keep both runtime services
-enabled unless every installed dependent explicitly documents otherwise.
+For manual installation, extract the release ZIP to that same directory. Runtime services are always
+enabled because dependent modules require them.
 
 ## Building
 

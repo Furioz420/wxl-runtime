@@ -6,7 +6,6 @@
 #include "common/ExtensionConfig.hpp"
 #include "wxl/FrameScriptApi.h"
 #include "wxl/NetworkApi.h"
-#include "wxl/NetworkObserverApi.h"
 #include "wxl/PluginApi.h"
 
 #include <cstddef>
