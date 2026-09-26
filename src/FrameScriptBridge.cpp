@@ -165,7 +165,7 @@ namespace
         return 1;
     }
 
-    int __cdecl ExecuteCurrent(const char* name, const char* source)
+    int __cdecl Execute(const char* source, const char* name)
     {
         if (!source || !*source) return 0;
         int ok = 0;
@@ -204,7 +204,7 @@ namespace
 
     const WXL_FrameScriptApi g_frameScriptApi{
         sizeof(WXL_FrameScriptApi), WXL_FRAME_SCRIPT_API_VERSION,
-        &RegisterFunction, &RegisterScript, &ExecuteCurrent, &RegisterCVar,
+        &RegisterFunction, &RegisterScript, &Execute, &RegisterCVar,
     };
 }
 

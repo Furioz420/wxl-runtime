@@ -6,7 +6,6 @@
 #include "engine/events/Event.hpp"
 #include "game/Network.hpp"
 #include "wxl/NetworkApi.h"
-#include "wxl/NetworkObserverApi.h"
 
 #include <windows.h>
 
@@ -193,8 +192,8 @@ namespace
         }
     }
 
-    void __fastcall ProcessMessage(void* client, void*, int time,
-                                   native::ClientPacket* packet, int unused)
+    void __fastcall ProcessMessage(void* client, void*, uint32_t connectionId,
+                                   native::ClientPacket* packet, uint32_t eventData)
     {
         if (packet && packet->buffer && packet->read <= packet->size &&
             packet->size - packet->read >= sizeof(uint16_t))
@@ -206,12 +205,14 @@ namespace
             {
                 QueuePacket(opcode, wire + sizeof(opcode),
                             packet->size - packet->read - sizeof(opcode));
-                return;
+                // Native observers receive a copy; WoW must still consume its own packet.
+                // Custom opcodes have no native handler and remain transport-owned.
+                if (opcode >= kFirstWxlOpcode) return;
             }
         }
 
         if (g_originalProcessMessage)
-            g_originalProcessMessage(client, time, packet, unused);
+            g_originalProcessMessage(client, connectionId, packet, eventData);
     }
 
     int __cdecl RegisterClientOpcode(uint16_t opcode, const char* name)
@@ -239,7 +240,7 @@ namespace
     int __cdecl RegisterServerObserver(uint16_t opcode, const char* name,
                                         WXL_NetworkPacketHandler handler, void* user)
     {
-        if (opcode < kFirstWxlOpcode || !name || !*name || !handler) return 0;
+        if (!name || !*name || !handler) return 0;
         Definitions& definitions = OpcodeDefinitions();
         const std::lock_guard lock(definitions.mutex);
         std::vector<ObserverEntry>& observers = definitions.observers[opcode];
@@ -298,11 +299,6 @@ namespace
         &RegisterClientOpcode,
         &RegisterServerOpcode,
         &Send,
-    };
-
-    WXL_NetworkObserverApi g_networkObserverApi = {
-        sizeof(WXL_NetworkObserverApi),
-        WXL_NETWORK_OBSERVER_API_VERSION,
         &RegisterServerObserver,
     };
 }
@@ -319,8 +315,6 @@ namespace wxl_runtime
 
         g_api->Subscribe(static_cast<uint32_t>(ev::Event::OnUpdate), &OnUpdate, nullptr);
         g_api->PublishInterface("wxl.network", WXL_NETWORK_API_VERSION, &g_networkApi);
-        g_api->PublishInterface("wxl.network-observer", WXL_NETWORK_OBSERVER_API_VERSION,
-                                &g_networkObserverApi);
         WLOG_INFO("network: custom opcode transport published");
         return true;
     }
