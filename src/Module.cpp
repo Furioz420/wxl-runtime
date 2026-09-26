@@ -15,19 +15,8 @@ int __cdecl WXL_Load(const WXL_Api* api)
 
     api->PublishInterface("wxl.framescript", WXL_FRAME_SCRIPT_API_VERSION,
                           const_cast<WXL_FrameScriptApi*>(wxl_runtime::FrameScriptApi()));
-    if (wxl_runtime::ConfigBool("WXL_RUNTIME_FRAMESCRIPT", true))
-    {
-        if (!wxl_runtime::InstallFrameScriptBridge()) return 0;
-    }
-    else
-        api->Log(WXL_LOG_INFO, "wxl-runtime", "FrameScript bridge disabled by configuration");
-
-    if (wxl_runtime::ConfigBool("WXL_RUNTIME_NETWORK", true))
-    {
-        if (!wxl_runtime::InstallNetworkBridge()) return 0;
-    }
-    else
-        api->Log(WXL_LOG_INFO, "wxl-runtime", "custom opcode transport disabled by configuration");
+    if (!wxl_runtime::InstallFrameScriptBridge()) return 0;
+    if (!wxl_runtime::InstallNetworkBridge()) return 0;
 
     api->Log(WXL_LOG_INFO, "wxl-runtime", "shared runtime services published");
     return 1;

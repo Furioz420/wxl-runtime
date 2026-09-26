@@ -2,10 +2,10 @@
   "manifest": 1,
   "extension": {
     "id": "wxl-runtime",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "abi": "1.1",
     "entry": "wxl-runtime.dll",
-    "assets": ["wxl-runtime.cfg"],
+    "assets": [],
     "requires": {},
     "conflicts": [],
     "hooks": [

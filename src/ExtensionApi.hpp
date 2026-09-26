@@ -3,10 +3,8 @@
 
 #pragma once
 
-#include "common/ExtensionConfig.hpp"
 #include "wxl/FrameScriptApi.h"
 #include "wxl/NetworkApi.h"
-#include "wxl/NetworkObserverApi.h"
 #include "wxl/PluginApi.h"
 
 #include <cstddef>
@@ -23,15 +21,6 @@ namespace wxl_runtime
     {
         return g_api->HookAttach(name, target, reinterpret_cast<void*>(detour),
                                  reinterpret_cast<void**>(original), priority) != 0;
-    }
-
-    inline bool ConfigBool(const char* name, bool fallback)
-    {
-        char value[16] = {};
-        return wxl::ext::config::Raw(name, value, sizeof value,
-                                     "Extensions\\wxl-runtime\\wxl-runtime.cfg")
-            ? wxl::ext::config::Truthy(value, fallback)
-            : fallback;
     }
 
     bool InstallFrameScriptBridge();
