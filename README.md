@@ -29,3 +29,13 @@ services are both required and enabled by this version.
 
 The release workflow builds this source as the `wxl-runtime` extension target in WarcraftXL v1.1.
 Until the prerequisite core API change is merged upstream, build it against that review branch.
+
+## Integration and release checks
+
+Build the `wxl-runtime` Win32 Release target against the matching core FrameScript and `wxl.network` v1 interfaces. The proposed 1.1 release workflow packages only `wxl-runtime.dll`; the removed config switches no longer disable either service. No DB2, UI, or server data ships here. Features using custom packets must provide matching server opcode handlers.
+
+Check startup logs for both published services, register a small FrameScript function through a dependent test module, and verify a custom packet round trip with a compatible server consumer. Confirm native observed packets still reach WoW. Keep the prior Runtime and dependent DLLs for rollback as one group. The standalone `main` workflow still builds against moving upstream `v1.1`; pin the merged core API and validate that ZIP before release.
+
+## Credits
+
+The WXL core ABI and original module interfaces come from WarcraftXL contributors. The local v1.1 integration commits in this snapshot are attributed to Furioz in the integration history. Preserve source-file notices and the GPL-3.0-or-later `LICENSE` when redistributing source or binaries.
