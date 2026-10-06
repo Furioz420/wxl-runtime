@@ -1,5 +1,7 @@
 # wxl-runtime
 
+[Build compatibility and release gate](BUILDING.md)
+
 Shared FrameScript and custom-packet services for WarcraftXL v1.1 extensions. The module keeps one
 owner for the client packet hook and lets feature modules register handlers through published APIs.
 
